@@ -16,7 +16,7 @@ Les données sont affichées sur un petit écran LCD de 2 lignes de 16 caractèr
 
 ### programmes Python
 
-Il faut toutr d'abord activer l'interface I2C du Raspberry pi avec 
+Il faut tout d'abord activer l'interface I2C du Raspberry pi avec 
 ```bach
 sudo raspi-config
 ```
