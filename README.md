@@ -29,6 +29,7 @@ Pour l'afficheur LCD j'ai récupéré la bilbiothèque I2C_LCD_DRIVER.py que je 
 Les scripts pythons ci-dessous permettent d'afficher la température et l'humidité ambiante sur le LCD:
 * test_LCD_dht22.py
 * I2C_LCD_DRIVER.py
+
 Les deux fichiers sont à déposer dans un répertoire /home/pi/tests/ du raspberry pi zero.
 
 usage: 
