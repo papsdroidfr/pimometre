@@ -14,7 +14,7 @@ Les données sont affichées sur un petit écran LCD de 2 lignes de 16 caractèr
 ## prototype de tests capteur et écran LCD
 ![fritzing_prototype_test](_docs/pimometre_test_fritzing.png)
 
-### programmes Python
+#### programmes Python
 
 Il faut tout d'abord activer l'interface I2C du Raspberry pi avec 
 ```bach
@@ -34,7 +34,7 @@ Les deux fichiers sont à déposer dans un répertoire /home/pi/tests/ du raspbe
 
 usage: 
 ```bach
-python3 /pimometre/tests/test_LCD_dht22.py
+python3 pimometre/tests/test_LCD_dht22.py
 ```
 
 ## test API météo
@@ -45,7 +45,7 @@ Récupérer votre token, et stockez le dans un fichier texte "tokenAPI.txt", à 
 
 usage:
 ```bach
-python3 /pimometre/tests/test_meteo_api.py [CP] 
+python3 pimometre/tests/test_meteo_api.py [CP] 
 ```
 en remplaçant [CP] par un code postal dont vous souhaitez les prévisions météo
 ![test_api](_docs/Capture_test_api.png)
