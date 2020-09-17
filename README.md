@@ -34,5 +34,17 @@ Les deux fichiers sont à déposer dans un répertoire /home/pi/tests/ du raspbe
 
 usage: 
 ```bach
-python3 /tests/test_LCD_dht22.py
+python3 /pimometre/tests/test_LCD_dht22.py
 ```
+
+##test API météo
+
+Pour récupérer les prévisions météorologiques locales, il faut créer un token "standard" sur https://api.meteo-concept.com/
+
+Récupérer votre token et stockez le dans un fichier texte "tokenAPI.txt", à déposer dans le dossier /home/pimometre/tests/ , ainsi que le programme python test_meteo_api.py à récupérer parmi les sources.
+
+usage:
+```bach
+python3 /pimometre/tests/test_meteo_api.py [CP] 
+```
+en remplaçant CP par un code postal dont vous souhaitez les prévisions météo 
