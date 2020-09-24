@@ -51,11 +51,11 @@ python3 pimometre/tests/test_meteo_api.py [CP]
 en remplaçant [CP] par un code postal dont vous souhaitez les prévisions météo
 ![test_api](_docs/Capture_test_api.png)
 
-Pour un même code postal il peut y avoir plusieurs villes: identifiez le code INSEE de la ville pour laquelle vous souhaitez avoir les prévision météio: ce code sera utilisé pour la suite du projet.
+Pour un même code postal il peut y avoir plusieurs villes: identifiez le code INSEE de la ville pour laquelle vous souhaitez avoir les prévisions météo: ce code sera utilisé pour la suite du projet.
 
 #### première version du projet: météo interne (capteur) et externe (api).
 
-le programme pimometre_v1.1.py dans le répertoire /tests permet d'afficher la météo interne capté par le capteur DHT22 (T° et taux d'humidité), ainsi que la température et taux d'humidité exterieure fournie par l'API.
+le programme pimometre_v1.1.py dans le répertoire **/tests** permet d'afficher la météo interne capté par le capteur DHT22 (T° et taux d'humidité), ainsi que la température et taux d'humidité exterieure fournie par l'API.
 
 usage: 
 ```python
@@ -65,10 +65,10 @@ python3 pimometre/tests/pimometre_v1.1.py [INSEE]
 remplacer [INSEE] par le code INSEE de votre ville (récupérée via le programme **test_meteo_api.py**) 
 ![test_v1.1](_docs/pimometre_v1.1.jpg)
 
-Pour pouvoir afficher des informations asynchrones sur un écran (LCD 16*2 en l'occurence), la meilleure solution est de confier la lecture des capteurs à des Threads indépendants. L'application principale consiste à afficher en boucle infinie avec un temps de repos pour ne pas saturer les processeurs ce que les Threads de lecture ont enregistrés la dernière fois qu'ils ont capté quelquechose. On peut ainsi afficher de manière régulière des informations captées par des capteurs qui ne sont absolument pas synchronisés.
+Pour pouvoir afficher des informations asynchrones sur un écran (LCD 16*2 en l'occurence), la meilleure solution est de confier la lecture des capteurs à des Threads indépendants. L'application principale consiste à afficher en boucle infinie avec un temps de repos pour ne pas saturer les processeurs ce que les Threads de lecture ont enregistrés la dernière fois qu'ils ont capté quelquechose. Grâce aux Threads On peut ainsi afficher de manière régulière des informations captées par des capteurs qui ne sont absolument pas synchronisés.
 
 Ce programme (orienté objet) contient 3 classes pour gérer l'application:
 * Classe **Application**, avec sa boucle principale **loop()** qui affiche en boucle infinie toutes les 2 secondes sur l'écran LCD les lectures faites par le DHT22 et l'appel à l'API météo.
-* Classe **DHT22**: capteur interne de T° et humidité. Ce capteur est capricieux et provoque souvent des erreurs de lecture qu'il faut ignorer, et il est conseillé d'attendre au minimum 2 secondes avant de retenter une lecture: un Thread qui lit en boucle infinie ce capteur toutes les 2 secondes est particulièrement bien adapté.
+* Classe **DHT22**: capteur interne de T° et humidité. Ce capteur est capricieux et provoque souvent des erreurs de lecture qu'il faut ignorer, et il est conseillé d'attendre au minimum 2 secondes avant de retenter une lecture: un Thread qui lit et enregistre en boucle infinie ce capteur toutes les 2 secondes est particulièrement bien adapté.
 * Classe **Meteo**: Thread de lecture de prévision météo via l'api https://api.meteo-concept.com. Ce thread va interroger l'API toutes les 15 mn (60*15 secondes) pour enregistrer la T° et le taux d'humidité de la ville correspondant au code [INSEE] fourni en paramètre lors de l'appel au programme. Attention l'appel à cette API nécessite que vous aillez au préalable **déclaré votre propre token dans le fichier de configuration tokenAPI.txt**
 
