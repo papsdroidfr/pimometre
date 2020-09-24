@@ -62,7 +62,7 @@ usage:
 python3 pimometre/tests/pimometre_v1.1.py [INSEE]
 ```
 
-remplacer [INSEE] par le code INSEE de votre ville (récupérée viua le programme test_meteo_api.py) 
+remplacer [INSEE] par le code INSEE de votre ville (récupérée via le programme **test_meteo_api.py**) 
 ![test_v1.1](_docs/pimometre_v1.1.jpg)
 
 Pour pouvoir afficher des informations asynchrones sur un écran (LCD 16*2 en l'occurence), la meilleure solution est de confier la lecture des capteurs à des Threads indépendants. L'application principale consiste à afficher en boucle infinie avec un temps de repos pour ne pas saturer les processeurs ce que les Threads de lecture ont enregistrés la dernière fois qu'ils ont capté quelquechose. On peut ainsi afficher de manière régulière des informations captées par des capteurs qui ne sont absolument pas synchronisés.
