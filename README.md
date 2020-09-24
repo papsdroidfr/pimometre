@@ -4,17 +4,18 @@ Récupération de prévisions météorologiques via une API Rest.
 Les données sont affichées sur un petit écran LCD de 2 lignes de 16 caractères.
 
 
-## choix matériel
+## prototype de test avec capteur et écran LCD
+
+#### choix matériel
+
 * Raspberry pi Zero WH avec Raspbian os lite et WIFI
 * 1 capteur température et humidité: DHT22 (précision T°: 0.5°C, précision humidité: 5%)
 * 1 résistance 4,7 k ohms
 * 1 écran LCD 16*2 avec backpack I2C à base de PCF8574
 
-
-## prototype de tests capteur et écran LCD
 ![fritzing_prototype_test](_docs/pimometre_test_fritzing.png)
 
-#### programmes Python
+#### programmes de tests Python
 
 Il faut tout d'abord activer l'interface I2C du Raspberry pi avec 
 ```bach
@@ -37,7 +38,7 @@ usage:
 python3 pimometre/tests/test_LCD_dht22.py
 ```
 
-## test API météo
+#### test API météo
 
 Pour récupérer les prévisions météorologiques locales, il faut d'abord créer un token "standard" sur https://api.meteo-concept.com/
 
