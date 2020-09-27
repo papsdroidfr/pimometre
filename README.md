@@ -42,11 +42,12 @@ python3 pimometre/tests/test_LCD_dht22.py
 
 Pour récupérer les prévisions météorologiques locales, il faut d'abord créer un token "standard" sur https://api.meteo-concept.com/
 
-Récupérer votre token, et stockez le dans un fichier texte "tokenAPI.txt", à déposer dans le dossier /home/pimometre/tests/ , ainsi que le programme python test_meteo_api.py à récupérer parmi les sources.
+Récupérer votre token, et stockez le dans un fichier texte "tokenAPI.txt", à déposer dans le dossier /home/pimometre/tests, ainsi que le programme python test_meteo_api.py à récupérer parmi les sources.
 
 usage:
 ```python
-python3 pimometre/tests/test_meteo_api.py [CP] 
+cd pimometre/tests
+python3 test_meteo_api.py [CP] 
 ```
 en remplaçant [CP] par un code postal dont vous souhaitez les prévisions météo
 ![test_api](_docs/Capture_test_api.png)
@@ -55,11 +56,12 @@ Pour un même code postal il peut y avoir plusieurs villes: identifiez le code I
 
 #### première version du projet: météo interne (capteur) et externe (api).
 
-le programme pimometre_v1.1.py dans le répertoire **/tests** permet d'afficher la météo interne capté par le capteur DHT22 (T° et taux d'humidité), ainsi que la température et taux d'humidité exterieure fournie par l'API.
+le programme **pimometre_v1.1.py** dans le répertoire **/tests** permet d'afficher la météo interne capté par le capteur DHT22 (T° et taux d'humidité), ainsi que la température et taux d'humidité exterieure fournie par l'API.
 
 usage: 
 ```python
-python3 pimometre/tests/pimometre_v1.1.py [INSEE]
+cd pimometre/tests
+python3 pimometre_v1.1.py [INSEE]
 ```
 
 remplacer [INSEE] par le code INSEE de votre ville (récupérée via le programme **test_meteo_api.py**) 
@@ -72,3 +74,4 @@ Ce programme (orienté objet) contient 3 classes pour gérer l'application:
 * Classe **DHT22**: capteur interne de T° et humidité. Ce capteur est capricieux et provoque souvent des erreurs de lecture qu'il faut ignorer, et il est conseillé d'attendre au minimum 2 secondes avant de retenter une lecture: un Thread qui lit et enregistre en boucle infinie ce capteur toutes les 2 secondes est particulièrement bien adapté.
 * Classe **Meteo**: Thread de lecture de prévision météo via l'api https://api.meteo-concept.com. Ce thread va interroger l'API toutes les 15 mn (60*15 secondes) pour enregistrer la T° et le taux d'humidité de la ville correspondant au code [INSEE] fourni en paramètre lors de l'appel au programme. Attention l'appel à cette API nécessite que vous aillez au préalable **déclaré votre propre token dans le fichier de configuration tokenAPI.txt**
 
+Une seconde version du programme **pimometre_v1.2.py** va permettre de faire défiler plusieurs informations sur la ligne des prévisions météos: température et humidité extérieure, puis vitesse du vent et probabilité de pluie, et enfin le buletin météo qui apparaît en scrolling de la droite vers la gauche.
