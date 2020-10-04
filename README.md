@@ -31,7 +31,7 @@ Les scripts pythons ci-dessous permettent d'afficher la température et l'humidi
 * test_LCD_dht22.py
 * I2C_LCD_DRIVER.py
 
-Les deux fichiers sont à déposer dans un répertoire /home/pi/tests/ du raspberry pi zero.
+Les deux fichiers sont à déposer dans un répertoire /home/pi/pimometre/tests/ du raspberry pi zero.
 
 usage: 
 ```bach
@@ -54,7 +54,7 @@ en remplaçant [CP] par un code postal dont vous souhaitez les prévisions mét�
 
 Pour un même code postal il peut y avoir plusieurs villes: identifiez le code INSEE de la ville pour laquelle vous souhaitez avoir les prévisions météo: ce code sera utilisé pour la suite du projet.
 
-#### première version du projet: météo interne (capteur) et externe (api).
+#### première version test du projet: météo interne (capteur) et externe (api).
 
 le programme **pimometre_v1.1.py** dans le répertoire **/tests** permet d'afficher la météo interne capté par le capteur DHT22 (T° et taux d'humidité), ainsi que la température et taux d'humidité exterieure fournie par l'API.
 
@@ -75,3 +75,43 @@ Ce programme (orienté objet) contient 3 classes pour gérer l'application:
 * Classe **Meteo**: Thread de lecture de prévision météo via l'api https://api.meteo-concept.com. Ce thread va interroger l'API toutes les 15 mn (60*15 secondes) pour enregistrer la T° et le taux d'humidité de la ville correspondant au code [INSEE] fourni en paramètre lors de l'appel au programme. Attention l'appel à cette API nécessite que vous aillez au préalable **déclaré votre propre token dans le fichier de configuration tokenAPI.txt**
 
 Une seconde version du programme **pimometre_v1.2.py** va permettre de faire défiler plusieurs informations sur la ligne des prévisions météos: température et humidité extérieure, puis vitesse du vent et probabilité de pluie, et enfin le buletin météo qui apparaît en scrolling de la droite vers la gauche.
+
+## projet complet
+
+#### matériel nécessaire
+
+* 1 Raspberry pi Zero WH avec Raspbian os lite et WIFI
+* 1 capteur température et humidité: DHT22 (précision T°: 0.5°C, précision humidité: 5%)
+* 1 résistance 4,7 k ohms
+* 1 écran LCD 16*2 avec backpack I2C à base de PCF8574
+* 2 condensateur céramique 100nf
+* 4 résistance 10 k ohms
+* 2 bouton poussoirs 6mm 4 pattes
+* 1 jack Barrel DC
+* 1 barette femelle 2*20pin pas 2,54mm pour raspberry pi
+* 1 connecteur 4 pin header coudé mâle 2,54mm (pour brancher le LCD)
+* 1 connecteur 3 pin header coudé mâle 2,54mm (popur brancher le capteur DHT22)
+* des câbles dupond souples femelle/femelle pour racorder le LCD et le DHT22 à la carte
+* un jeux d'entretoises nylons M2.5 pour fixer le LCD et surélever le PCB.
+
+![fritzing_prototype](_docs/pimometre_fritzing.png)
+
+#### circuit imprimé
+
+utilisez le fichier zippé **GERBER_pimometre.zip** pour commander le circuit imprimé auprès de n'importe quel fabriquant de PCB.
+Vous pourrez y souder tous les composants: les indications claires sont sérigraphiées.
+Le raspberry pi se loge par dessous le PCB.
+Le LCD et le DHT22 sont connectés à la carte avec des cables souple femelle/femelle qui se retrouvent entre le circuit imprimé et l'afficheur LCD. 
+Il est important de maintenir le capteur DHT22 éloigné du système, pour ne pas que la chaleur dégagée par le raspberry ne perturbe les mesures.
+
+![PCB_3D](_docs/kicad_pimometre_3D_recto.jpg)
+
+#### installation du programme python
+
+Dans le répertoire **/home/pi/pimometre** déposer le fichier **tokenAPI.txt** et **pymometre.py** 
+Il faut enregistrer son propre token déclarés préalablement dans https://api.meteo-concept.com/ dans le fichier tokenAPI.txt
+Installez bien toutes les dépendances comme expliqué dans la partie tests.
+
+
+
+
