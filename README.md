@@ -23,7 +23,15 @@ sudo raspi-config
 ```
 reboot nécessaire.
 
-Pour le capteur DHT22, il faut instaler les dépendances et bilbiothèques circuit-python d'Adafruit en suivant [ce guide](https://circuitpython.readthedocs.io/projects/dht/en/latest/)
+Pour le capteur DHT22, il faut instaler les dépendances et bilbiothèques circuit-python d'Adafruit en suivant [ce guide](https://circuitpython.readthedocs.io/projects/dht/en/latest/). Pour ce qui me concerne j'ai enchaîné ces commandes:
+
+```bach
+sudo pip3 install rpi.GPIO
+sudo pip3 install adafruit-blinka
+sudo pip3 install adafruit-circuitpython_dht
+sudo apt-get install libgpiod2
+```
+
 
 Pour l'afficheur LCD j'ai récupéré la bilbiothèque I2C_LCD_DRIVER.py que je trouve particulièrement bien faite et complète sur [ce site](https://www.circuitbasics.com/raspberry-pi-i2c-lcd-set-up-and-programming/).
 
@@ -108,10 +116,49 @@ Il est important de maintenir le capteur DHT22 éloigné du système, pour ne pa
 
 #### installation du programme python
 
-Dans le répertoire **/home/pi/pimometre** déposer le fichier **tokenAPI.txt** et **pymometre.py** 
-Il faut enregistrer son propre token déclarés préalablement dans https://api.meteo-concept.com/ dans le fichier tokenAPI.txt
+Dans le répertoire **/home/pi/pimometre** déposer les fichiers **tokenAPI.txt**,  **I2C_LCD_DRIVER.py**, et **pymometre.py** 
+Il faut enregistrer son propre token déclaré préalablement dans https://api.meteo-concept.com/ dans le fichier tokenAPI.txt
 Installez bien toutes les dépendances comme expliqué dans la partie tests.
 
+Testez d'abord le programme en vous connectant en SSH au piZero:
+ 
+```python
+python3 pimometre/pimometre.py [INSEE]
+```
 
+remplacer [INSEE] par le code INSEE de votre ville (à ne pas confondre avec le CODE POSTAL ...)
 
+Des messages seront affichés s'il y a des problèmes.
+
+Le script est prévu pour interroger toutes les 5mn l'API météo, et toutes les 10 secondes le capteur DHT22. 
+* la première ligne concerne la température et humidité ambiante captée par le DHT22
+* la seconde ligne concerne les prévisions météo extérieures via l'API: un premier écran avec la température et l'humlidité pendant 2 secondes, puis un second écran avec a vitesse du vent et la probabilité de pluie, et un troisième écran avec le buletin météo en scrolling. La légende à gauche de l'acran indique l'heure de la prévision et une petite icône représentative de ce qui est affiché (soleil/pluie/niveau de pluie)
+* Un appui sur le bouton **Select** va afficher les prévisions météo dans 3h, puis 6h, 9h puis retour à l'heure courante
+* un appui sur le bouton **Off** va éteindre le système. Pour le redémarrer: il faut enlever et rebrancher le +5v.
+
+#### automatisation au démarrage
+
+Pour que le programme démarre tout seul au démarrage du raspberry pi, il faut ajouter une commande dans la crontable:
+
+ouvrir la crontab en édition
+```bach
+sudo nano /etc/crontab -e
+```
+
+ajouter cette ligne à la fin, avant le #:
+
+```python
+@reboot pi python3 -u 'pimometre.py' [INSEE] > 'pimometre/pimometre.log' 2>&1 &
+@monthly reboot
+```
+pensez à remplacer [INSEE] par le code INSEE de votre ville (à ne pas confondre avec le code postal ...)
+
+* La première commande indique qu'au démarrage du pizero (@reboot) le user pi doit éxécuter la commande python3 -u .... et rediriger toutes les sorties vers le fichier pimometre/pimometre.log.
+* La seconde commande @monthly reboot porte bien son nom: elle provoque un reboot automatique du pizero tous les mois
+
+En démarrant **il est normal que la seconde ligne du LCD indique qu'il y a un problème WIFI**: en effet le démarrage des services WIFI est plus lent que l'exécution de la crontable et il faut donc patienter 5mn pour que la deuxième tentative d'appel API (toutes les 5mn) se fasse avec le WIFI activé. Normalement au bout de 5mn le wifi est activé et les prévision météo de l'heure en cours s'affiche.
+
+Vous pouvez aussi vous connecter en SSH au piZero, et consulter le contenu du fichier de logs dans /home/pi/pimometre/pimometre.log
+
+Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi je coupe le WIFI toutes les nuits de 23h à 07h): les précisions météos vont alors afficher "Pb cnx WIFI" et reprendrons toutes seules à 5mn près dès que le WIFI est réactivé.
 
