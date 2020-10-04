@@ -132,8 +132,8 @@ Des messages seront affichés s'il y a des problèmes.
 
 Le script est prévu pour interroger toutes les 5mn l'API météo (cequi génère au maximum 288 appels d'API par jour), et toutes les 10 secondes le capteur DHT22. 
 * la première ligne concerne la température et humidité ambiante captée par le DHT22
-* la seconde ligne concerne les prévisions météo extérieures via l'API: un premier écran avec la température et l'humlidité pendant 2 secondes, puis un second écran avec a vitesse du vent et la probabilité de pluie, et un troisième écran avec le buletin météo en scrolling. La légende à gauche de l'acran indique l'heure de la prévision et une petite icône représentative de ce qui est affiché (soleil/pluie/niveau de pluie)
-* Un appui sur le bouton **Select** va afficher les prévisions météo dans 3h, puis 6h, 9h puis retour à l'heure courante
+* la seconde ligne concerne les prévisions météo extérieures via l'API: un premier écran avec la température et l'humidité pendant 2 secondes, puis un second écran avec a vitesse du vent et la probabilité de pluie (2s), et un troisième écran avec le bulletin météo en scrolling. La légende à gauche de l'écran indique l'heure de la prévision et une petite icône représentative de ce qui est affiché (soleil/pluie/niveau de pluie)
+* Un appui sur le bouton **Select** va afficher les prévisions météo dans 3h, puis 6h, 9h et retour à l'heure courante
 * un appui sur le bouton **Off** va éteindre le système. Pour le redémarrer: il faut enlever et rebrancher le +5v.
 
 #### automatisation au démarrage
@@ -164,5 +164,5 @@ Lorsqu'il démarre,le programme se lance au bout de quelques instants: **il est 
 
 Vous pouvez aussi vous connecter en SSH au piZero, et consulter le contenu du fichier de logs dans /home/pi/pimometre/pimometre.log
 
-Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi je coupe le WIFI toutes les nuits de 23h à 07h): les prévisions météos vont alors afficher **"pb cnx WIFI"** et reprendrons toutes seules dès que le WIFI est réactivé (à 5mn près).
+Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi je coupe le WIFI toutes les nuits de 23h à 07h): les prévisions météos vont alors afficher **"pb cnx WIFI"** et reprendront toutes seules dès que le WIFI est réactivé (à 5mn près).
 
