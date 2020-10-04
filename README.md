@@ -130,7 +130,7 @@ remplacer [INSEE] par le code INSEE de votre ville (à ne pas confondre avec le 
 
 Des messages seront affichés s'il y a des problèmes.
 
-Le script est prévu pour interroger toutes les 5mn l'API météo, et toutes les 10 secondes le capteur DHT22. 
+Le script est prévu pour interroger toutes les 5mn l'API météo (cequi génère au maximum 288 appels d'API par jour), et toutes les 10 secondes le capteur DHT22. 
 * la première ligne concerne la température et humidité ambiante captée par le DHT22
 * la seconde ligne concerne les prévisions météo extérieures via l'API: un premier écran avec la température et l'humlidité pendant 2 secondes, puis un second écran avec a vitesse du vent et la probabilité de pluie, et un troisième écran avec le buletin météo en scrolling. La légende à gauche de l'acran indique l'heure de la prévision et une petite icône représentative de ce qui est affiché (soleil/pluie/niveau de pluie)
 * Un appui sur le bouton **Select** va afficher les prévisions météo dans 3h, puis 6h, 9h puis retour à l'heure courante
@@ -148,19 +148,21 @@ sudo nano /etc/crontab -e
 ajouter cette ligne à la fin, avant le #:
 
 ```python
-@reboot pi python3 -u 'pimometre.py' [INSEE] > 'pimometre/pimometre.log' 2>&1 &
+@reboot pi python3 -u 'pimometre/pimometre.py' [INSEE] > 'pimometre/pimometre.log' 2>&1 &
 @monthly reboot
 ```
 pensez à remplacer [INSEE] par le code INSEE de votre ville (à ne pas confondre avec le code postal ...)
 
 tappez CTRL-O pour sauvegarder les changements, puis CTRL-X pour quitter
 
-* La première commande indique qu'au démarrage du pizero (@reboot) le user pi doit éxécuter la commande python3 -u .... et rediriger toutes les sorties vers le fichier pimometre/pimometre.log.
-* La seconde commande @monthly reboot porte bien son nom: elle provoque un reboot automatique du pizero tous les mois
+* La première commande indique qu'au démarrage du pizero (@reboot) le user pi doit éxécuter la commande python3 -u .... et rediriger toutes les sorties vers le fichier pimometre/pimometre.log. **Ne pas oublier le & final** qui signifie d'éxécuter la commande en tâche de fond.
+* La seconde commande @monthly reboot porte bien son nom: elle provoque un reboot automatique du pizero tous les mois: quand un système tourne h24 7J/7 avec des logs qui se remplissent, il est conseillé de faire un reboot de temps en temps.
 
-En démarrant **il est normal que la seconde ligne du LCD indique qu'il y a un problème WIFI**: en effet le démarrage des services WIFI est plus lent que l'exécution de la crontable et il faut donc patienter 5mn pour que la deuxième tentative d'appel API (toutes les 5mn) se fasse avec le WIFI activé. Normalement au bout de 5mn le wifi est activé et les prévision météo de l'heure en cours s'affiche.
+Vous pouvez éteindre le pizero (**sudo poweroff** en SSH), le débrancher quand la lumière verte est éteinte puis le rebrancher.
+
+Lorsqu'il démarre,le programme se lance au bout de quelques instants: **il est normal que la seconde ligne du LCD indique qu'il y a un problème WIFI**: en effet le démarrage des services WIFI est plus lent que l'exécution de la crontable et il faut donc patienter 5mn pour que la deuxième tentative d'appel API (toutes les 5mn) se fasse avec le WIFI activé. Normalement au bout de 5mn le wifi est activé et les prévisions météo de l'heure en cours s'affichent.
 
 Vous pouvez aussi vous connecter en SSH au piZero, et consulter le contenu du fichier de logs dans /home/pi/pimometre/pimometre.log
 
-Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi je coupe le WIFI toutes les nuits de 23h à 07h): les précisions météos vont alors afficher "Pb cnx WIFI" et reprendrons toutes seules à 5mn près dès que le WIFI est réactivé.
+Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi je coupe le WIFI toutes les nuits de 23h à 07h): les prévisions météos vont alors afficher **"pb cnx WIFI"** et reprendrons toutes seules dès que le WIFI est réactivé (à 5mn près).
 
