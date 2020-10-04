@@ -153,6 +153,8 @@ ajouter cette ligne à la fin, avant le #:
 ```
 pensez à remplacer [INSEE] par le code INSEE de votre ville (à ne pas confondre avec le code postal ...)
 
+tappez CTRL-O pour sauvegarder les changements, puis CTRL-X pour quitter
+
 * La première commande indique qu'au démarrage du pizero (@reboot) le user pi doit éxécuter la commande python3 -u .... et rediriger toutes les sorties vers le fichier pimometre/pimometre.log.
 * La seconde commande @monthly reboot porte bien son nom: elle provoque un reboot automatique du pizero tous les mois
 
