@@ -28,7 +28,7 @@ Pour le capteur DHT22, il faut instaler les dépendances et bilbiothèques circu
 ```bach
 sudo pip3 install rpi.GPIO
 sudo pip3 install adafruit-blinka
-sudo pip3 install adafruit-circuitpython_dht
+sudo pip3 install adafruit-circuitpython-dht
 sudo apt-get install libgpiod2
 ```
 
@@ -92,10 +92,11 @@ Une seconde version du programme **pimometre_v1.2.py** va permettre de faire dé
 * 1 capteur température et humidité: DHT22 (précision T°: 0.5°C, précision humidité: 5%)
 * 1 résistance 4,7 k ohms
 * 1 écran LCD 16*2 avec backpack I2C à base de PCF8574
-* 2 condensateur céramique 100nf
-* 4 résistance 10 k ohms
-* 2 bouton poussoirs 6mm 4 pattes
+* 2 condensateurs céramiques 100nf
+* 4 résistances 10 k ohms
+* 2 boutons poussoirs 6mm 4 pattes
 * 1 jack Barrel DC
+* 1 alimentation 5v 2A jack DC
 * 1 barette femelle 2*20pin pas 2,54mm pour raspberry pi
 * 1 connecteur 4 pin header coudé mâle 2,54mm (pour brancher le LCD)
 * 1 connecteur 3 pin header coudé mâle 2,54mm (popur brancher le capteur DHT22)
@@ -109,7 +110,7 @@ Une seconde version du programme **pimometre_v1.2.py** va permettre de faire dé
 utilisez le fichier zippé **GERBER_pimometre.zip** pour commander le circuit imprimé auprès de n'importe quel fabriquant de PCB.
 Vous pourrez y souder tous les composants: les indications claires sont sérigraphiées.
 Le raspberry pi se loge par dessous le PCB.
-Le LCD et le DHT22 sont connectés à la carte avec des cables souple femelle/femelle qui se retrouvent entre le circuit imprimé et l'afficheur LCD. 
+Le LCD et le DHT22 sont connectés à la carte avec des câbles souple femelle/femelle qui se retrouvent entre le circuit imprimé et l'afficheur LCD. 
 Il est important de maintenir le capteur DHT22 éloigné du système, pour ne pas que la chaleur dégagée par le raspberry ne perturbe les mesures.
 
 ![PCB_3D](_docs/kicad_pimometre_3D_recto.jpg)
@@ -132,7 +133,7 @@ Des messages seront affichés s'il y a des problèmes.
 
 Le script est prévu pour interroger toutes les 5mn l'API météo (cequi génère au maximum 288 appels d'API par jour), et toutes les 10 secondes le capteur DHT22. 
 * la première ligne concerne la température et humidité ambiante captée par le DHT22
-* la seconde ligne concerne les prévisions météo extérieures via l'API: un premier écran avec la température et l'humidité pendant 2 secondes, puis un second écran avec a vitesse du vent et la probabilité de pluie (2s), et un troisième écran avec le bulletin météo en scrolling. La légende à gauche de l'écran indique l'heure de la prévision et une petite icône représentative de ce qui est affiché (soleil/pluie/niveau de pluie)
+* la seconde ligne concerne les prévisions météo extérieures via l'API: un premier écran avec la température et l'humidité pendant 2 secondes, puis un second écran avec la vitesse du vent et la probabilité de pluie (2s), un troisième écran avec le bulletin météo en scrolling. La légende à gauche de l'écran indique l'heure de la prévision et une petite icône représentative de ce qui est affiché (thermomètre / soleil / pluie / 5 niveaux de pluie)
 * Un appui sur le bouton **Select** va afficher les prévisions météo dans 3h, puis 6h, 9h et retour à l'heure courante
 * un appui sur le bouton **Off** va éteindre le système. Pour le redémarrer: il faut enlever et rebrancher le +5v.
 
@@ -145,7 +146,7 @@ ouvrir la crontab en édition
 sudo nano /etc/crontab -e
 ```
 
-ajouter cette ligne à la fin, avant le #:
+ajouter ces deux lignes à la fin, avant le #:
 
 ```python
 @reboot pi python3 -u 'pimometre/pimometre.py' [INSEE] > 'pimometre/pimometre.log' 2>&1 &
@@ -164,5 +165,5 @@ Lorsqu'il démarre,le programme se lance au bout de quelques instants: **il est 
 
 Vous pouvez aussi vous connecter en SSH au piZero, et consulter le contenu du fichier de logs dans /home/pi/pimometre/pimometre.log
 
-Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi je coupe le WIFI toutes les nuits de 23h à 07h): les prévisions météos vont alors afficher **"pb cnx WIFI"** et reprendront toutes seules dès que le WIFI est réactivé (à 5mn près).
+Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi je coupe le WIFI toutes les nuits de 23h à 07h): les prévisions météos vont alors afficher **"pb cnx API"** et reprendront toutes seules dès que le WIFI est réactivé (à 5mn près).
 
