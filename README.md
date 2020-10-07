@@ -13,6 +13,8 @@ Les données sont affichées sur un petit écran LCD de 2 lignes de 16 caractèr
 * 1 résistance 4,7 k ohms
 * 1 écran LCD 16*2 avec backpack I2C à base de PCF8574
 
+Pour configurer le piZero: suivez [ce guide](https://www.papsdroid.fr/post/configurer-pizero)
+
 ![fritzing_prototype_test](_docs/pimometre_test_fritzing.png)
 
 #### test capteur DHT22
