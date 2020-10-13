@@ -5,11 +5,12 @@
 # Description : station météo de salon avec prévision
 # auther      : papsdroid.fr
 # creation    : 2020/09/20
-# modification: 2020/09/24
+# modification: 2020/10/13
 ########################################################################
 
 import RPi.GPIO as GPIO
 import time, board,os, adafruit_dht,threading,  I2C_LCD_DRIVER
+from datetime import datetime
 from contextlib import closing
 from urllib.request import urlopen
 from urllib.error import URLError
@@ -58,9 +59,11 @@ class Meteo(threading.Thread):
     def __init__(self, insee=None):
         """ constructeur """
         threading.Thread.__init__(self)  # appel au constructeur de la classe mère Thread
-        self.delay = 60*5                # refresh delays in s
+        self.delay = 60*5                # délais attente avant nouvelle interrogation API
+        self.delay_retry = 5             # délais retentative appel API en cas de pb (exple WIFI KO)
         self.insee = insee               # code INSEE de la ville pour les prévisions
         self.forecast = None             # prévisions météo (API)
+        self.apiOK = False               # passe à True si thread démarré et réponse API OK
         #-- get token from tokenAPI.txt file
         try:
             with open('tokenAPI.txt','r') as f:
@@ -164,7 +167,7 @@ class Meteo(threading.Thread):
 
         self.URLAPI   = 'https://api.meteo-concept.com/api'
         self.GETHOURS = '/forecast/nextHours'
-        self.HOURLY='&hourly=true' #GET forecast every  hour
+        self.HOURLY   = '&hourly=true' #GET forecast every  hour
         if (self.mytoken is not None and self.insee is not None):
             self.TOKEN  = '?token='+self.mytoken
             self.SEARCH = '&insee='+self.insee
@@ -179,12 +182,15 @@ class Meteo(threading.Thread):
                     decoded = json.loads(f.read())
                     self.forecast = decoded['forecast']
                     self.city = decoded['city']['name']
-                    print('{} mise à jour prévisions météo de {} (nb:{}) {}'.format(self.forecast[0]['datetime'], self.city,
-                            len(self.forecast), self.WEATHER[self.forecast[0]['weather']]))
+                    print('{}: mise à jour prévisions météo de {} à {} (nb:{}) {}'.format(datetime.now(),self.forecast[0]['datetime'],
+                               self.city, len(self.forecast), self.WEATHER[self.forecast[0]['weather']]))
+                    self.apiOK = True
+                    time.sleep(self.delay)
             except URLError as error: # HTTPError(req.full_url, code, msg, hdrs, fp)
-                print('pb connexion API: vérifier le token ou la connexion WIFI:',error)
-                self.forecast = None
-            time.sleep(self.delay)    # nouvelle tentative toute les self.delay secondes
+                if not(self.apiOK) or self.forecast is not None:
+                    print(datetime.now(),':pb connexion API, vérifier le token ou la connexion WIFI:',error)
+                    self.forecast = None
+                time.sleep(self.delay_retry)  # nouvelle tentative toute les self.delay_retry secondes
 
 class LCD:
     """ classe gestion du LCD """
@@ -243,6 +249,7 @@ class Application:
         self.lcd = LCD()                        # LCD 16*2
         self.idforecast=0                       # n° de prévision météo séléctionnée
         self.on = True                          # affichage en boucle si True
+        self.next = False                       # affichage suivant si True
         self.buttonSelectPin = 20               # bouton SELECT pour changer l'affichage
         self.buttonOffPin = 21                  # bouton OFF d'extinction
         #pin associés aux boutons poussoirs
@@ -253,14 +260,15 @@ class Application:
 
     def buttonOffEvent(self, hcannel):
         """ méthode exécutée lors d'un appuie sur le bouton Off """
-        print("Bouton Off préssé")
+        print(datetime.now(), 'Bouton Off préssé')
         self.destroy()         # arrêt des threads et extinction du LCD
         time.sleep(2)
-        os.system('sudo halt') #provoque l'extinction du Raspberry pi
+        os.system('sudo halt') # provoque l'extinction du Raspberry pi
 
     def buttonSelectEvent(self, channel):
         """ méthode exécutée lors d'un appui sur le bonton SELECT """
-        self.idforecast += 3
+        self.next=True
+        self.idforecast += 3   # prévisions à +3h
         if self.idforecast == len(self.meteo.forecast):
             self.idforecast = 0
         print('--> SELECT prévisions météo à {}'.format(self.meteo.forecast[self.idforecast]['datetime']))
@@ -271,55 +279,68 @@ class Application:
         self.on = False             #arrêt boucle principale application
         self.dht22.etat = False
         self.meteo.etat = False
-        print('bye')
+        print(datetime.now(),'bye')
         self.lcd.off()     # clear LCD
 
     def loop(self):
         """ boucle principale de l'appli """
-        self.lcd.display_string('In  ...',1)
-        self.lcd.display_string('Ex  ...',2)
+        self.lcd.display_string('In  init dht22..',1)
+        self.lcd.display_string('Ex  init API ...',2)
         self.lcd.display_char(0,1,3) # thermometre symbol
         self.lcd.display_char(0,2,3) # thermometre symbol
-        self.lcd.scroll_string("initialisation ...",2,4)
+
         while self.on:
 
             #temperature  intérieure
             if (self.dht22.temperature_c is not None and self.dht22.humidity is not None):
                 self.lcd.display_string("{:00.1f}{}C {:00.1f}%".format(self.dht22.temperature_c,chr(223),self.dht22.humidity),1,4)
-            else:
-                self.lcd.display_string("...",1,4)
 
-            # meteo extérieure via API
+            # méteo extérieure via API
             if self.meteo.forecast is not None:
                 #legende
-                t = self.meteo.forecast[self.idforecast]['datetime']
-                self.lcd.display_string(t[11:13]+'h',2) # heure de prédiction HH
+                try:  # carefully use of self.meteo.forecast that can turn into None at any time (Thread).
+                    t = self.meteo.forecast[self.idforecast]['datetime']
+                    self.lcd.display_string(t[11:13]+'h',2) # heure de prédiction HH
+                except:
+                    continue
 
                 #température
-                self.lcd.display_char(0,2,3) # thermometre symbol
-                self.lcd.display_string("{:.1f}{}C {:.1f}%".format(self.meteo.forecast[self.idforecast]['temp2m'], chr(223),
+                try:
+                    self.lcd.display_char(0,2,3) # thermometre symbol
+                    self.lcd.display_string("{:.1f}{}C {:.1f}%".format(self.meteo.forecast[self.idforecast]['temp2m'], chr(223),
                                                                           self.meteo.forecast[self.idforecast]['rh2m']), 2,4)
-                if self.on:
-                    time.sleep(2)
+                    if self.on and not(self.next):
+                        time.sleep(2)
+                except:
+                    continue
 
                 # wind, proba rain
-                if self.on:
-                    probarain = self.meteo.forecast[self.idforecast]['probarain']
-                    self.lcd.display_level(probarain,2,3)  # level symbol based on proba rain
-                    self.lcd.display_string(" "*12,2,4)
-                    self.lcd.display_string("{:.0f}km/h {:.1f}%".format(self.meteo.forecast[self.idforecast]['wind10m'],probarain),2,4)
-                    time.sleep(2)
+                if self.on and not(self.next):
+                    try:
+                        probarain = self.meteo.forecast[self.idforecast]['probarain']
+                        self.lcd.display_level(probarain,2,3)  # level symbol based on proba rain
+                        self.lcd.display_string(" "*12,2,4)
+                        self.lcd.display_string("{:.0f}km/h {:.1f}%".format(self.meteo.forecast[self.idforecast]['wind10m'],probarain),2,4)
+                        time.sleep(2)
+                    except:
+                        continue
 
                 # scroll meteo long string
-                if self.on:
-                    weather = self.meteo.forecast[self.idforecast]['weather']
-                    if  weather < 10: # sun
-                        self.lcd.display_char(2,2,3) # sun symbol
-                    else:
-                        self.lcd.display_char(1,2,3) # rain & clouds symbol
-                    s = self.meteo.WEATHER[weather]  # label correspondant au code météo
-                    s = unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('utf-8')  # supprime tous les accents
-                    self.lcd.scroll_string(s,2,4)
+                if self.on and not(self.next):
+                    try:
+                        weather = self.meteo.forecast[self.idforecast]['weather']
+                        if  weather < 10: # sun
+                            self.lcd.display_char(2,2,3) # sun symbol
+                        else:
+                            self.lcd.display_char(1,2,3) # rain & clouds symbol
+                        s = self.meteo.WEATHER[weather]  # label correspondant au code météo
+                        s = unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('utf-8')  # supprime tous les accents
+                        self.lcd.scroll_string(s,2,4)
+                    except:
+                        continue
+
+                if self.on and self.next:
+                    self.next=False
 
             else:
                 self.lcd.display_string(' pb cnx API ',2,4)
