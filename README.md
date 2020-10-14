@@ -169,3 +169,4 @@ Vous pouvez aussi vous connecter en SSH au piZero, et consulter le contenu du fi
 
 Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi je coupe le WIFI toutes les nuits de 23h à 07h): les prévisions météos vont alors afficher **"pb cnx API"** et reprendront toutes seules dès que le WIFI est réactivé (à 5mn près).
 
+Tutoriel complet du projet:[pimometre](https://www.papsdroid.fr/post/pimometre)
