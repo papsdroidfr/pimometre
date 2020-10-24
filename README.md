@@ -3,6 +3,7 @@ Mini station météo de salon connecté équipée d'un capteur de température e
 Récupération de prévisions météorologiques via une API Rest. 
 Les données sont affichées sur un petit écran LCD de 2 lignes de 16 caractères.
 
+Le tutoriel complet du projet est partagé sur mon site: [pimometre](https://www.papsdroid.fr/post/pimometre)
 
 ## prototype de test avec capteur et écran LCD
 
@@ -169,4 +170,3 @@ Vous pouvez aussi vous connecter en SSH au piZero, et consulter le contenu du fi
 
 Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi je coupe le WIFI toutes les nuits de 23h à 07h): les prévisions météos vont alors afficher **"pb cnx API"** et reprendront toutes seules dès que le WIFI est réactivé (à 5mn près).
 
-Tutoriel complet du projet:[pimometre](https://www.papsdroid.fr/post/pimometre)
