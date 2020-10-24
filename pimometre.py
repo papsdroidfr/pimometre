@@ -27,6 +27,7 @@ class DHT22(threading.Thread):
         self.delay = 10                  # delay in s before reading a new mesure
         self.temperature_c = None
         self.humidity = None
+        self.readOk   = False            # True: lecture capteur ok
         self.start()                     # start thread
 
     def run(self):
@@ -38,12 +39,13 @@ class DHT22(threading.Thread):
             try:
                 self.temperature_c = self.dhtDevice.temperature
                 self.humidity = self.dhtDevice.humidity
+                self.readOk = True
             except RuntimeError as error:
                 print(datetime.now(),' DHT22 warning:', error.args[0])
-                continue
+                self.readOk=False
             except Exception as error:
                 self.dhtDevice.exit()
-                continue
+                self.readOk=False
             time.sleep(self.delay) #wait at least 2s before reading a new mesure
         self.off()  # free dht22 device
 
@@ -293,6 +295,12 @@ class Application:
 
             #temperature  intérieure
             if (self.dht22.temperature_c is not None and self.dht22.humidity is not None):
+                #legende
+                if self.dht22.readOk:
+                    self.lcd.display_string('In ',1)
+                else:
+                    self.lcd.display_string('In*',1) #une étoile est ajoutée si la dernière mesure n'a pas abouti
+                #température et humidité
                 self.lcd.display_string("{:00.1f}{}C {:00.1f}%".format(self.dht22.temperature_c,chr(223),self.dht22.humidity),1,4)
 
             # méteo extérieure via API
