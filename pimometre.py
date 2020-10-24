@@ -40,12 +40,9 @@ class DHT22(threading.Thread):
                 self.temperature_c = self.dhtDevice.temperature
                 self.humidity = self.dhtDevice.humidity
                 self.readOk = True
-            except RuntimeError as error:
-                print(datetime.now(),' DHT22 warning:', error.args[0])
-                self.readOk=False
-            except Exception as error:
-                self.dhtDevice.exit()
-                self.readOk=False
+            except :
+                self.readOk = False
+                print(datetime.now(),' DHT22 read Error')
             time.sleep(self.delay) #wait at least 2s before reading a new mesure
         self.off()  # free dht22 device
 
