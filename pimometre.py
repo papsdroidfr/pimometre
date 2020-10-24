@@ -39,7 +39,7 @@ class DHT22(threading.Thread):
                 self.temperature_c = self.dhtDevice.temperature
                 self.humidity = self.dhtDevice.humidity
             except RuntimeError as error:
-                print(error.args[0])
+                print(datetime.now(),' DHT22 warning:', error.args[0])
                 continue
             except Exception as error:
                 self.dhtDevice.exit()
