@@ -152,7 +152,7 @@ ajouter ces deux lignes à la fin, avant le #:
 
 ```python
 @reboot pi python3 -u 'pimometre/pimometre.py' [INSEE] > 'pimometre/pimometre.log' 2>&1 &
-@monthly reboot
+@weekly reboot
 ```
 pensez à remplacer [INSEE] par le code INSEE de votre ville (à ne pas confondre avec le code postal ...)
 
