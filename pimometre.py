@@ -5,7 +5,7 @@
 # Description : station météo de salon avec prévision
 # auther      : papsdroid.fr
 # creation    : 2020/09/20
-# modification: 2020/10/13
+# modification: 2020/10/24
 ########################################################################
 
 import RPi.GPIO as GPIO
@@ -24,10 +24,10 @@ class DHT22(threading.Thread):
         threading.Thread.__init__(self)  # appel au constructeur de la classe mère Thread
         print("Init capteur DHT22")
         self.dhtDevice = adafruit_dht.DHT22(board.D18) # catpeur T°  humidity DHT22
-        self.delay = 10             # delay in s before reading a new mesure
+        self.delay = 10                  # delay in s before reading a new mesure
         self.temperature_c = None
         self.humidity = None
-        self.start()                # start thread
+        self.start()                     # start thread
 
     def run(self):
         """ exécution thread: lit T° et humidité du capteur DHT22 toutes les sefl.delay secondes
@@ -39,10 +39,10 @@ class DHT22(threading.Thread):
                 self.temperature_c = self.dhtDevice.temperature
                 self.humidity = self.dhtDevice.humidity
             except RuntimeError as error:
-                #print(error.args[0])
+                print(error.args[0])
                 continue
             except Exception as error:
-                #self.dhtDevice.exit()
+                self.dhtDevice.exit()
                 continue
             time.sleep(self.delay) #wait at least 2s before reading a new mesure
         self.off()  # free dht22 device
@@ -200,8 +200,8 @@ class LCD:
         self.lcd.backlight(1)                   # turn LCD backligth on
         fontdata = [ [0b00100,0b01010,0b01010,0b01010,0b11011,0b10111,0b11111,0b01110], #0 = thermometre
                      [0b00000,0b00100,0b11110,0b11111,0b01010,0b01001,0b00100,0b00000], #1 = clouds rain
-                     [0b00000,0b10101,0b01110,0b10001,0b10001,0b10001,0b01110,0b10101], #2 = sun
-                     [0b00000,0b01110,0b10001,0b10001,0b10001,0b11111,0b11111,0b00000], #3 level [0-25[   %
+                     [0b10101,0b01110,0b10001,0b10001,0b10001,0b01110,0b10101,0b00000], #2 = sun
+                     [0b00000,0b01110,0b10001,0b10001,0b10001,0b11111,0b11111,0b00000], #3 level     [0-25[   %
                      [0b00000,0b01110,0b10001,0b10001,0b11111,0b11111,0b11111,0b0000] , #4 level [25-50[  %
                      [0b00000,0b01110,0b10001,0b11111,0b11111,0b11111,0b11111,0b00000], #5 level [50-75[  %
                      [0b00000,0b01110,0b11101,0b11111,0b11111,0b11111,0b11111,0b00000], #6 level [75-100[ %
