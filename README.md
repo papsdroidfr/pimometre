@@ -153,14 +153,14 @@ ajouter ces deux lignes à la fin, avant le #:
 
 ```python
 @reboot pi python3 -u 'pimometre/pimometre.py' [INSEE] > 'pimometre/pimometre.log' 2>&1 &
-@weekly reboot
+@daily reboot
 ```
 pensez à remplacer [INSEE] par le code INSEE de votre ville (à ne pas confondre avec le code postal ...)
 
 tappez CTRL-O pour sauvegarder les changements, puis CTRL-X pour quitter
 
 * La première commande indique qu'au démarrage du pizero (@reboot) le user pi doit éxécuter la commande python3 -u .... et rediriger toutes les sorties vers le fichier pimometre/pimometre.log. **Ne pas oublier le & final** qui signifie d'éxécuter la commande en tâche de fond.
-* La seconde commande @monthly reboot porte bien son nom: elle provoque un reboot automatique du pizero tous les mois: quand un système tourne h24 7J/7 avec des logs qui se remplissent, il est conseillé de faire un reboot de temps en temps.
+* La seconde commande @daily reboot porte bien son nom: elle provoque un reboot automatique du pizero tous les jours (à minuit): quand un système tourne h24 7J/7 avec des logs qui se remplissent, il est conseillé de faire un reboot de temps en temps.Dasn le cas du pimometre la log est assez "verbeuse" donc vaut mieux rebooter toutes les nuit. 
 
 Vous pouvez éteindre le pizero (**sudo poweroff** en SSH), le débrancher quand la lumière verte est éteinte puis le rebrancher.
 
