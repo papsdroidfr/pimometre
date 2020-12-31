@@ -1,7 +1,5 @@
 # pimometre
 
-![pimometre](_docs/boitier3D_03_web.png)
-
 Mini station météo de salon connecté équipée d'un capteur de température et d'humidité pour la température ambiante.
 Récupération de prévisions météorologiques via une API Rest. 
 Les données sont affichées sur un petit écran LCD de 2 lignes de 16 caractères.
@@ -174,6 +172,8 @@ Vous pouvez aussi vous connecter en SSH au piZero, et consulter le contenu du fi
 Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi je coupe le WIFI toutes les nuits de 23h à 07h): les prévisions météos vont alors afficher **"pb cnx API"** et reprendront toutes seules dès que le WIFI est réactivé (à 5mn près).
 
 ## Boîtier imprimé 3D
+
+![pimometre](_docs/boitier3D_03_web.png)
 
 Un boîtier peut être imprimé en PLA avec une imprimante 3D: télechargez les fichier stl dans le dossier **impression3D** du projet. Ce boîtier peut être imprimé en **0.2mm** (toutes les côtes sont prévues pour) avec les supports uniquement nécessaires pour la coque basse (pour pouvoir imprimer l'ouverture du branchement Jack 5v).Je conseille de cocher l'option **"amélioration de la surface d'adhésion"** car sinon les bords ont tendance à se décoller un peu, ce qui rend la structure du boîtier légèrement bombée et rend difficile (voire impossible) sa fermeture.
 
