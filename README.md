@@ -177,8 +177,8 @@ Le script python est prévu pour gérer les coupures WIFI (par exemple chez moi 
 
 Un boîtier peut être imprimé en PLA avec une imprimante 3D: télechargez les fichier stl dans le dossier **impression3D** du projet. Ce boîtier peut être imprimé en **0.2mm** (toutes les côtes sont prévues pour) avec les supports uniquement nécessaires pour la coque basse (pour pouvoir imprimer l'ouverture du branchement Jack 5v). Je conseille de cocher l'option **"amélioration de la surface d'adhésion"** car sinon les bords ont tendance à se décoller un peu, ce qui rend la structure du boîtier légèrement bombée et rend difficile (voire impossible) sa fermeture.
 
-Le boîtier se compose de 3 parties:
-* **coque_basse.stl**: partie basse de la coque dans laquelle se loge la carte. Il faut bien la positionner à raz-bord, elle repose sur les petits rebords. Il faut fixer le LCD avec des petites entretoise nylon M2.5 de 15mm.
+Le boîtier peut se poser à plat horizontalement (LCD vers le haut), ou bien inclié à 20° (avec 2 pieds optionnels), ou encore à plat à 90° vissé sur un mur. Il se compose de 3 éléments:
+* **coque_basse.stl**: partie basse de la coque dans laquelle se loge la carte. Il faut bien la positionner à raz-bord, elle repose sur les petits rebords. Il faut fixer le LCD avec des petites entretoise nylon M2.5 de **15mm**.
 * **coque_haute.stl**: partie haute du boîtier, avec les réhausses de boutons poussoir intégrés. 
 * **pied.stl** : à imprimer 2 fois. Ils sont optionnels et ne servent que si vous souhaitez poser le pimomètre incliné à 20°
 
